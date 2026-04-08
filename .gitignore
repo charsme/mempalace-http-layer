@@ -4,3 +4,14 @@
 # Palace data — never commit memories
 data/*
 !data/.gitkeep
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Local compose overrides
+docker-compose.override.yml
+*.log

@@ -62,7 +62,6 @@ Configured in `.env` (copy from `.env.example`):
 | Variable | Purpose |
 |---|---|
 | `DOMAIN` | Public hostname (e.g. `mempalace.chars.me`) |
-| `ACME_EMAIL` | Let's Encrypt registration email |
 | `MEMPALACE_VERSION` | PyPI version to pin (default: `latest`) |
 | `MCP_PORT` | Internal mcp-proxy port (default: `3000`) |
 
