@@ -1,0 +1,26 @@
+services:
+  mempalace:
+    build:
+      context: .
+      args:
+        MEMPALACE_VERSION: ${MEMPALACE_VERSION:-latest}
+    container_name: mempalace
+    restart: unless-stopped
+    environment:
+      - MEMPALACE_PALACE_PATH=/root/.mempalace/palace
+    volumes:
+      - ./data:/root/.mempalace
+    expose:
+      - "${MCP_PORT:-3000}"
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mempalace.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.mempalace.entrypoints=websecure"
+      - "traefik.http.routers.mempalace.tls.certresolver=letsencrypt"
+      - "traefik.http.services.mempalace.loadbalancer.server.port=${MCP_PORT:-3000}"
+
+networks:
+  traefik-public:
+    external: true
