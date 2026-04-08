@@ -10,8 +10,6 @@ RUN pip install --no-cache-dir mcp-proxy \
          pip install --no-cache-dir "mempalace==${MEMPALACE_VERSION}"; \
        fi
 
-ENV MEMPALACE_PALACE_PATH=/root/.mempalace/palace
-
 EXPOSE 3000
 
 CMD ["mcp-proxy", "--port", "3000", "--", "python", "-m", "mempalace.mcp_server"]
