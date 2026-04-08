@@ -1,0 +1,6 @@
+# Environment
+.env
+
+# Palace data — never commit memories
+data/*
+!data/.gitkeep
