@@ -98,3 +98,8 @@ Tailscale client → :443 → IPAllowList ✓ → mcp-proxy → mempalace
 - **Single container** — mcp-proxy + mempalace in one image, simpler than a sidecar
 - **Bind mount over named volume** — `./data/` is easier to inspect, back up, and restore
 - **No Traefik in this compose** — joins the existing `traefik-public` network instead
+
+## Design Docs
+
+- `docs/superpowers/specs/2026-04-08-http-transport-design.md` — original design spec with problem statement and architecture decisions
+- `docs/superpowers/plans/2026-04-08-http-transport.md` — implementation plan
