@@ -1,4 +1,28 @@
 services:
+
+  # OAuth 2.0 server — issues tokens for claude.ai, validates all requests
+  mempalace-oauth:
+    build:
+      context: ./auth
+    container_name: mempalace-oauth
+    restart: unless-stopped
+    environment:
+      - OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID}
+      - OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+      - OAUTH_STATIC_TOKEN=${OAUTH_STATIC_TOKEN:-}
+      - DOMAIN=${DOMAIN}
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      # OAuth discovery + token endpoints — no auth required
+      - "traefik.http.routers.mempalace-oauth.rule=Host(`${DOMAIN}`) && (PathPrefix(`/oauth`) || Path(`/.well-known/oauth-authorization-server`))"
+      - "traefik.http.routers.mempalace-oauth.entrypoints=websecure"
+      - "traefik.http.routers.mempalace-oauth.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.mempalace-oauth.priority=10"
+      - "traefik.http.services.mempalace-oauth.loadbalancer.server.port=8080"
+
+  # MCP server — protected by ForwardAuth
   mempalace:
     build:
       context: .
@@ -21,10 +45,12 @@ services:
       - "traefik.http.routers.mempalace.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.mempalace.entrypoints=websecure"
       - "traefik.http.routers.mempalace.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.mempalace.priority=1"
       - "traefik.http.services.mempalace.loadbalancer.server.port=${MCP_PORT:-3000}"
-      - "traefik.http.middlewares.mempalace-auth.basicauth.users=${MEMPALACE_AUTH}"
-      - "traefik.http.middlewares.mempalace-auth.basicauth.removeheader=true"
-      - "traefik.http.routers.mempalace.middlewares=mempalace-auth"
+      # ForwardAuth — Traefik calls /oauth/verify before routing to mcp-proxy
+      - "traefik.http.middlewares.mempalace-forwardauth.forwardauth.address=http://mempalace-oauth:8080/oauth/verify"
+      - "traefik.http.middlewares.mempalace-forwardauth.forwardauth.authResponseHeaders=Authorization"
+      - "traefik.http.routers.mempalace.middlewares=mempalace-forwardauth"
 
 networks:
   traefik-public:
