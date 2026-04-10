@@ -16,7 +16,7 @@ services:
     labels:
       - "traefik.enable=true"
       # OAuth discovery + token endpoints — no auth required
-      - "traefik.http.routers.mempalace-oauth.rule=Host(`${DOMAIN}`) && (PathPrefix(`/oauth`) || Path(`/.well-known/oauth-authorization-server`))"
+      - "traefik.http.routers.mempalace-oauth.rule=Host(`${DOMAIN}`) && (PathPrefix(`/oauth`) || Path(`/.well-known/oauth-authorization-server`) || Path(`/authorize`))"
       - "traefik.http.routers.mempalace-oauth.entrypoints=websecure"
       - "traefik.http.routers.mempalace-oauth.tls.certresolver=letsencrypt"
       - "traefik.http.routers.mempalace-oauth.priority=10"
