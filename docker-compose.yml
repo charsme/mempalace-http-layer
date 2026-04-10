@@ -10,7 +10,6 @@ services:
     user: "1000:1000"
     environment:
       - HOME=/mempalace
-      - MEMPALACE_PALACE_PATH=/mempalace/palace
     volumes:
       - ./data:/mempalace:z
     expose:

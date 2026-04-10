@@ -30,7 +30,7 @@ docker compose down
 ## Architecture
 
 ```
-Tailscale network
+Any client (with BasicAuth credentials)
       ↓
   Traefik (external, traefik-public network — not managed here)
       ↓
@@ -48,10 +48,13 @@ All palace state lives in `./data/` on the host (bind-mounted into the container
 
 | `./data/` path | Container path | Contents |
 |---|---|---|
-| `palace/` | `/mempalace/palace/` | ChromaDB vector store |
-| `knowledge_graph.sqlite3` | `/mempalace/knowledge_graph.sqlite3` | Temporal knowledge graph |
-| `config.json` | `/mempalace/config.json` | MemPalace configuration |
-| `identity.txt` | `/mempalace/identity.txt` | L0 identity prompt |
+| `.mempalace/palace/` | `/mempalace/.mempalace/palace/` | ChromaDB vector store |
+| `.mempalace/knowledge_graph.sqlite3` | `/mempalace/.mempalace/knowledge_graph.sqlite3` | Temporal knowledge graph |
+| `.mempalace/config.json` | `/mempalace/.mempalace/config.json` | MemPalace configuration |
+| `.mempalace/identity.txt` | `/mempalace/.mempalace/identity.txt` | L0 identity prompt |
+| `.cache/chroma/` | `/mempalace/.cache/chroma/` | Embedding model cache (persisted across rebuilds) |
+
+All paths are derived from `HOME=/mempalace` — mempalace uses `~/.mempalace/` by convention. `KnowledgeGraph.__init__` creates the directory automatically on first run.
 
 Back up `./data/` to preserve memories.
 

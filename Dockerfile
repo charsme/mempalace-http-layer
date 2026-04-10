@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir mcp-proxy \
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "mkdir -p /mempalace/palace && exec mcp-proxy --host 0.0.0.0 --port 3000 -- python -m mempalace.mcp_server"]
+CMD ["mcp-proxy", "--host", "0.0.0.0", "--port", "3000", "--", "python", "-m", "mempalace.mcp_server"]
