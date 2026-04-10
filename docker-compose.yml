@@ -6,6 +6,7 @@ services:
         MEMPALACE_VERSION: ${MEMPALACE_VERSION:-latest}
     container_name: mempalace
     restart: unless-stopped
+    userns_mode: "host"
     user: "1000:1000"
     environment:
       - HOME=/mempalace
