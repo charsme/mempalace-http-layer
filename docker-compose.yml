@@ -23,8 +23,9 @@ services:
       - "traefik.http.routers.mempalace.entrypoints=websecure"
       - "traefik.http.routers.mempalace.tls.certresolver=letsencrypt"
       - "traefik.http.services.mempalace.loadbalancer.server.port=${MCP_PORT:-3000}"
-      - "traefik.http.middlewares.tailscale-only.ipallowlist.sourcerange=100.64.0.0/10"
-      - "traefik.http.routers.mempalace.middlewares=tailscale-only"
+      - "traefik.http.middlewares.mempalace-auth.basicauth.users=${MEMPALACE_AUTH}"
+      - "traefik.http.middlewares.mempalace-auth.basicauth.removeheader=true"
+      - "traefik.http.routers.mempalace.middlewares=mempalace-auth"
 
 networks:
   traefik-public:

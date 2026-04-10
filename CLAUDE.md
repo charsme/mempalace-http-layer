@@ -64,32 +64,44 @@ Configured in `.env` (copy from `.env.example`):
 | `DOMAIN` | Public hostname (e.g. `mempalace.chars.me`) |
 | `MEMPALACE_VERSION` | PyPI version to pin (default: `latest`) |
 | `MCP_PORT` | Internal mcp-proxy port (default: `3000`) |
+| `MEMPALACE_AUTH` | Traefik BasicAuth credential — `user:$$bcrypt_hash` (generate below) |
+
+Generate `MEMPALACE_AUTH`:
+```bash
+htpasswd -nB youruser | sed 's/\$/$$/g'
+```
 
 ## Networking
 
 - Joins `traefik-public` as an **external** Docker network — Traefik must already be running
 - TLS via Let's Encrypt (ACME httpChallenge on port 80 — must be publicly reachable)
 - DNS A record for `${DOMAIN}` should point to the server's **public IP**
-- Port 443 is restricted to Tailscale CIDR (`100.64.0.0/10`) via Traefik `IPAllowList` middleware — non-Tailscale clients receive 403
+- Auth: HTTP Basic Auth via Traefik middleware (`MEMPALACE_AUTH` env var) — open to any client
 - Port 80 serves the ACME challenge only; mempalace has no port 80 router
 
 ```
-Public internet → :80  → ACME challenge only
-Public internet → :443 → IPAllowList → 403
-Tailscale client → :443 → IPAllowList ✓ → mcp-proxy → mempalace
+Any client → :80  → ACME challenge only
+Any client → :443 → BasicAuth → mcp-proxy → mempalace
 ```
 
 ## Client Config (all AI tools)
+
+Embed credentials in the URL:
 
 ```json
 {
   "mcpServers": {
     "mempalace": {
       "type": "sse",
-      "url": "https://mempalace.chars.me/sse"
+      "url": "https://youruser:yourpassword@mempalace.chars.me/sse"
     }
   }
 }
+```
+
+Claude Code CLI:
+```bash
+claude mcp add --transport sse --scope global mempalace https://youruser:yourpassword@mempalace.chars.me/sse
 ```
 
 ## Key Decisions
