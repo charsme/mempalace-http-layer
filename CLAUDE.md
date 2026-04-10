@@ -35,9 +35,9 @@ Tailscale network
   Traefik (external, traefik-public network — not managed here)
       ↓
   mempalace container :3000
-  (python:3.12-slim + mempalace + mcp-proxy)
+  (python:3.12-slim + mempalace + mcp-proxy, runs as UID 1000)
       ↓
-  ./data/  →  /root/.mempalace/  (bind mount)
+  ./data/  →  /mempalace/  (bind mount)
 ```
 
 `mcp-proxy` spawns `python -m mempalace.mcp_server` as a subprocess and exposes it as HTTP/SSE on port 3000. Traefik routes `${DOMAIN}` → port 3000.
@@ -46,12 +46,12 @@ Tailscale network
 
 All palace state lives in `./data/` on the host (bind-mounted into the container). This directory is gitignored — never commit it.
 
-| `./data/` path | Contents |
-|---|---|
-| `palace/` | ChromaDB vector store |
-| `knowledge_graph.sqlite3` | Temporal knowledge graph |
-| `config.json` | MemPalace configuration |
-| `identity.txt` | L0 identity prompt |
+| `./data/` path | Container path | Contents |
+|---|---|---|
+| `palace/` | `/mempalace/palace/` | ChromaDB vector store |
+| `knowledge_graph.sqlite3` | `/mempalace/knowledge_graph.sqlite3` | Temporal knowledge graph |
+| `config.json` | `/mempalace/config.json` | MemPalace configuration |
+| `identity.txt` | `/mempalace/identity.txt` | L0 identity prompt |
 
 Back up `./data/` to preserve memories.
 

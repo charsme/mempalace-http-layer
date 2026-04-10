@@ -6,11 +6,11 @@ services:
         MEMPALACE_VERSION: ${MEMPALACE_VERSION:-latest}
     container_name: mempalace
     restart: unless-stopped
-    userns_mode: "host"
+    user: "1000:1000"
     environment:
-      - MEMPALACE_PALACE_PATH=/root/.mempalace/palace
+      - MEMPALACE_PALACE_PATH=/mempalace/palace
     volumes:
-      - ./data:/root/.mempalace:z
+      - ./data:/mempalace:z
     expose:
       - "${MCP_PORT:-3000}"
     networks:
