@@ -9,7 +9,7 @@ services:
     environment:
       - MEMPALACE_PALACE_PATH=/root/.mempalace/palace
     volumes:
-      - ./data:/root/.mempalace
+      - ./data:/root/.mempalace:z
     expose:
       - "${MCP_PORT:-3000}"
     networks:
