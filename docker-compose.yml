@@ -49,6 +49,7 @@ services:
       - "traefik.http.services.mempalace.loadbalancer.server.port=${MCP_PORT:-3000}"
       # ForwardAuth — Traefik calls /oauth/verify before routing to mcp-proxy
       - "traefik.http.middlewares.mempalace-forwardauth.forwardauth.address=http://mempalace-oauth:8080/oauth/verify"
+      - "traefik.http.middlewares.mempalace-forwardauth.forwardauth.authRequestHeaders=Authorization"
       - "traefik.http.middlewares.mempalace-forwardauth.forwardauth.authResponseHeaders=Authorization"
       - "traefik.http.routers.mempalace.middlewares=mempalace-forwardauth"
 
