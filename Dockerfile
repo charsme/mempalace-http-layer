@@ -2,8 +2,14 @@ FROM python:3.12-slim
 
 ARG MEMPALACE_VERSION=latest
 
-# Install mcp-proxy first (stable), then mempalace at requested version
-RUN pip install --no-cache-dir mcp-proxy \
+# Install Node.js LTS (required for supergateway)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends nodejs npm \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install supergateway (keeps stdio process alive across SSE connections)
+# and mempalace at requested version
+RUN npm install -g @supercorp-ai/supergateway \
     && if [ "$MEMPALACE_VERSION" = "latest" ]; then \
          pip install --no-cache-dir mempalace; \
        else \
@@ -12,4 +18,4 @@ RUN pip install --no-cache-dir mcp-proxy \
 
 EXPOSE 3000
 
-CMD ["mcp-proxy", "--host", "0.0.0.0", "--port", "3000", "--", "python", "-m", "mempalace.mcp_server"]
+CMD ["supergateway", "--stdio", "python -m mempalace.mcp_server", "--port", "3000", "--host", "0.0.0.0"]
