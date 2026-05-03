@@ -9,7 +9,7 @@ RUN apt-get update \
 
 # Install supergateway (keeps stdio process alive across SSE connections)
 # and mempalace at requested version
-RUN npm install -g @supercorp-ai/supergateway \
+RUN npm install -g supergateway \
     && if [ "$MEMPALACE_VERSION" = "latest" ]; then \
          pip install --no-cache-dir mempalace; \
        else \
